@@ -7,29 +7,15 @@ const app = express();
 
 // EJS
 app.set("view engine", "ejs");
-
-// HANDLEBARS
-// app.engine(
-//   "hbs",
-//   expressHbs.engine({
-//     layoutsDir: "views/layouts/",
-//     defaultLayout: "main-layout",
-//     extname: ".hbs",
-//   })
-// );
-// app.set("view engine", "hbs");
-
-// PUG
-// app.set("view engine", "pug");
 app.set("views", "views");
 
-const adminData = require("./routes/admin");
+const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/admin", adminData.routes);
+app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {

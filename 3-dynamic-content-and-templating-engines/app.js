@@ -5,15 +5,21 @@ const expressHbs = require("express-handlebars");
 
 const app = express();
 
-app.engine(
-  "hbs",
-  expressHbs.engine({
-    layoutsDir: "views/layouts/",
-    defaultLayout: "main-layout",
-    extname: ".hbs",
-  })
-);
-app.set("view engine", "hbs");
+// EJS
+app.set("view engine", "ejs");
+
+// HANDLEBARS
+// app.engine(
+//   "hbs",
+//   expressHbs.engine({
+//     layoutsDir: "views/layouts/",
+//     defaultLayout: "main-layout",
+//     extname: ".hbs",
+//   })
+// );
+// app.set("view engine", "hbs");
+
+// PUG
 // app.set("view engine", "pug");
 app.set("views", "views");
 

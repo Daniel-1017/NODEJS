@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const errorController = require("./controllers/error");
-// const User = require("./models/user");
+const User = require("./models/user");
 
 const app = express();
 
@@ -18,14 +18,14 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use((req, res, next) => {
-//   User.findUserById("6378119d05f4aa62b9bc08b8")
-//     .then((user) => {
-//       req.user = new User(user.name, user.email, user.cart, user._id);
-//       next();
-//     })
-//     .catch((err) => console.log(err));
-// });
+app.use((req, res, next) => {
+  User.findUserById("6378e762f2360f9b36a6b0b1")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -37,6 +37,18 @@ mongoose
     "mongodb+srv://first_user:1234@cluster0.j4grqal.mongodb.net/shop?retryWrites=true&w=majority"
   )
   .then((res) => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "Daniel",
+          email: "daniel@test.com",
+          cart: {
+            items: [],
+          },
+        });
+        user.save();
+      }
+    });
     app.listen(3000);
   })
   .catch((err) => console.log(err));

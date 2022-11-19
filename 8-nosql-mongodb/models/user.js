@@ -63,7 +63,19 @@ class User {
         });
       })
       .catch((err) => console.log(err));
-    // .next();
+  }
+
+  deleteItemFromCart(prodId) {
+    const db = getDb();
+    const updatedCartItem = this.cart.items.filter(
+      (item) => item.productId.toString() !== prodId.toString()
+    );
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: { items: updatedCartItem } } }
+      );
   }
 
   static findUserById(userId) {

@@ -23,7 +23,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        return res.redirect("/login");
+        return res.redirect("/signup");
       }
       bcrypt
         .compare(password, user.password)
@@ -53,7 +53,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
-        return res.redirect("/signup");
+        return res.redirect("/login");
       }
       return bcrypt
         .hash(password, 12)

@@ -9,7 +9,6 @@ exports.getAddProduct = (req, res, next) => {
     hasError: false,
     errorMessage: null,
     validationErrors: [],
-    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -94,7 +93,6 @@ exports.getEditProduct = (req, res, next) => {
         hasError: false,
         errorMessage: null,
         validationErrors: [],
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -126,7 +124,6 @@ exports.postEditProduct = (req, res, next) => {
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
-      isAuthenticated: req.session.isLoggedIn,
     });
   }
 
@@ -160,7 +157,6 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {

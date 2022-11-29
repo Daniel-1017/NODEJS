@@ -9,12 +9,28 @@ const Order = require("../models/order");
 const ITEMS_PER_PAGE = 2;
 
 exports.getProducts = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+
   Product.find()
+    .countDocuments()
+    .then((numProducts) => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
-        pageTitle: "All Products",
+        pageTitle: "Products",
         path: "/products",
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
@@ -42,13 +58,13 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  const page = req.query.page;
+  const page = +req.query.page || 1;
   let totalItems;
 
   Product.find()
     .countDocuments()
-    .then((numOfProducts) => {
-      totalItems = numOfProducts;
+    .then((numProducts) => {
+      totalItems = numProducts;
       return Product.find()
         .skip((page - 1) * ITEMS_PER_PAGE)
         .limit(ITEMS_PER_PAGE);
@@ -58,22 +74,19 @@ exports.getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        totalProducts: totalItems,
+        currentPage: page,
         hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPrevPage: page > 1,
+        hasPreviousPage: page > 1,
         nextPage: page + 1,
-        prevPage: page - 1,
-        lastPage: Math.cail(totalItems / ITEMS_PER_PAGE),
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
-      {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      }
-    })
-    .catch((err) => console.log(err));
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getCart = (req, res, next) => {
@@ -101,7 +114,7 @@ exports.postCart = (req, res, next) => {
     .then((product) => {
       return req.user.addToCart(product);
     })
-    .then((result) => {
+    .then(() => {
       res.redirect("/cart");
     });
 };
@@ -110,7 +123,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
     .removeFromCart(prodId)
-    .then((result) => {
+    .then(() => {
       res.redirect("/cart");
     })
     .catch((err) => {
@@ -137,7 +150,7 @@ exports.postOrder = (req, res, next) => {
       });
       return order.save();
     })
-    .then((result) => {
+    .then(() => {
       return req.user.clearCart();
     })
     .then(() => {

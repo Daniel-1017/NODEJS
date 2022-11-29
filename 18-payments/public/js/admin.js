@@ -13,7 +13,7 @@ const deleteProduct = (btn) => {
     .then((res) => {
       return res.json();
     })
-    .then((data) => {
+    .then(() => {
       productElement.remove();
     })
     .catch((err) => console.log(err));

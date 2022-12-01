@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator/check");
 
 exports.signup = (req, res, next) => {
@@ -40,7 +41,7 @@ exports.login = (req, res, next) => {
   const password = req.body.password;
   let loadedUser;
 
-  User.findOne({ email })
+  User.findOne({ email: email })
     .then((user) => {
       if (!user) {
         const error = new Error("A user with this email could not be found.");
@@ -56,6 +57,16 @@ exports.login = (req, res, next) => {
         error.statusCode = 401;
         throw error;
       }
+      const token = jwt.sign(
+        { email, userId: loadedUser._id.toString() },
+        "secret",
+        { expiresIn: "1h" }
+      );
+      res.status(200).json({
+        message: "Token was created.",
+        token,
+        userId: loadedUser._id.toString(),
+      });
     })
     .catch((err) => {
       if (!err.statusCode) {

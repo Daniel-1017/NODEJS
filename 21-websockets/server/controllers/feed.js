@@ -147,7 +147,6 @@ exports.deletePost = async (req, res, next) => {
       error.statusCode = 403;
       throw error;
     }
-    // Check logged in user
     clearImage(post.imageUrl);
     await Post.findByIdAndRemove(postId);
 

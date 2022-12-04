@@ -56,7 +56,7 @@ module.exports = {
         email: user.email,
       },
       "secret",
-      { expires: "1h" }
+      { expiresIn: "1h" }
     );
     return { token, userId: user._id.toString() };
   },

@@ -33,6 +33,7 @@ exports.getProducts = (req, res, next) => {
         nextPage: page + 1,
         previousPage: page - 1,
         lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+        isLoggedIn: false,
       });
     })
     .catch((err) => {
